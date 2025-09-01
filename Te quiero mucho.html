@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Te Quiero</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+        }
+
+        .te-amo {
+            position: absolute;
+            color: #ff3366;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 51, 102, 0.7);
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        .explosion {
+            position: absolute;
+            color: #ff0000;
+            font-size: 20px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: explode 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(0.1);
+                opacity: 1;
+            }
+            70% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        #audio-control {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<audio id="audio-control" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2021/11/23/audio_1f7634d3e5.mp3?filename=romantic-cinematic-piano-11160.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+</audio>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const audio = document.getElementById('audio-control');
+    audio.volume = 0.5;
+
+    function startMusic() {
+        audio.play().catch(e => console.log("Auto-play prevented"));
+        document.removeEventListener('click', startMusic);
+        document.removeEventListener('touchstart', startMusic);
+    }
+
+    document.addEventListener('click', startMusic);
+    document.addEventListener('touchstart', startMusic);
+
+    function createTeAmo() {
+        const teAmo = document.createElement('div');
+        teAmo.className = 'te-amo';
+        teAmo.textContent = 'Te Quiero Mucho';
+
+        teAmo.style.left = Math.random() * window.innerWidth + 'px';
+        teAmo.style.top = '-50px';
+
+        const size = 16 + Math.random() * 20;
+        teAmo.style.fontSize = size + 'px';
+
+        const duration = 3 + Math.random() * 7;
+        teAmo.style.animationDuration = duration + 's';
+
+        const red = 200 + Math.random() * 55;
+        const pink = 50 + Math.random() * 100;
+        teAmo.style.color = `rgb(${red}, ${pink}, ${pink})`;
+
+        document.body.appendChild(teAmo);
+
+        setTimeout(() => {
+            teAmo.remove();
+        }, duration * 1000);
+    }
+
+    function createExplosion(x, y) {
+        const count = 20 + Math.floor(Math.random() * 30);
+
+        for (let i = 0; i < count; i++) {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.textContent = 'Te Quiero Mucho';
+
+            explosion.style.left = x + 'px';
+            explosion.style.top = y + 'px';
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 100;
+            const delay = Math.random() * 0.5;
+
+            explosion.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+            explosion.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+            explosion.style.animationDelay = delay + 's';
+
+            const size = 12 + Math.random() * 20;
+            explosion.style.fontSize = size + 'px';
+
+            const red = 150 + Math.random() * 105;
+            explosion.style.color = `rgb(${red}, ${Math.random() * 50}, ${Math.random() * 50})`;
+
+            document.body.appendChild(explosion);
+
+            setTimeout(() => {
+                explosion.remove();
+            }, 1000 + delay * 1000);
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        createExplosion(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        for (let i = 0; i < e.touches.length; i++) {
+            createExplosion(e.touches[i].clientX, e.touches[i].clientY);
+        }
+    }, { passive: false });
+
+    setInterval(createTeAmo, 300);
+
+    for (let i = 0; i < 20; i++) {
+        setTimeout(createTeAmo, i * 150);
+    }
+});
+</script>
+</body>
+</html>
